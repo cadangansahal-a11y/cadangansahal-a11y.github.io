@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi PSAT PPKn Kelas XI - SMKN 1 Cimahi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased flex flex-col">
+
+    <!-- Top Premium Navbar -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg">
+                    <i class="fa-solid fa-scale-balanced text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">PSAT PANCASILA XI</h1>
+                    <p class="text-xs text-slate-400 font-semibold tracking-wide">EDISI SMKN 1 CIMAHI</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Pomodoro Timer Badge -->
+                <div id="pomodoro-widget" class="hidden sm:flex items-center space-x-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-clock text-rose-500 animate-pulse"></i>
+                    <span id="pomo-display" class="font-mono text-xs font-bold text-slate-300">Pomodoro: Off</span>
+                    <button onclick="togglePomodoro()" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md transition-all">Start</button>
+                </div>
+
+                <!-- Mode Badge -->
+                <div class="bg-blue-950/50 border border-blue-800 text-blue-400 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    <span id="current-mode-label">Mode Latihan</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Layout -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- Left sidebar (Progress & Navigation Grid) -->
+        <aside class="col-span-1 flex flex-col space-y-6 order-2 lg:order-1">
+            <!-- Stats Dashboard -->
+            <div class="bg-slate-950/80 border border-slate-800 p-5 rounded-2xl shadow-xl backdrop-blur-sm">
+                <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider mb-4 flex items-center justify-between">
+                    <span>Statistik Progres</span>
+                    <i class="fa-solid fa-chart-line text-blue-500"></i>
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-400 mb-1.5">
+                            <span>Selesai Terjawab</span>
+                            <span id="answered-counter">0 / 40 Soal</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                            <div id="progress-bar-fill" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center">
+                            <span class="text-[10px] font-black text-slate-400 uppercase block mb-0.5">Ragu-ragu</span>
+                            <span id="marked-counter" class="text-lg font-black text-amber-500">0</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center">
+                            <span class="text-[10px] font-black text-slate-400 uppercase block mb-0.5">Akurasi</span>
+                            <span id="accuracy-counter" class="text-lg font-black text-emerald-500">-%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Jump Grid -->
+            <div class="bg-slate-950/80 border border-slate-800 p-5 rounded-2xl shadow-xl backdrop-blur-sm">
+                <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider mb-4 flex items-center justify-between">
+                    <span>Navigasi Lembar Jawab</span>
+                    <i class="fa-solid fa-border-all text-indigo-500"></i>
+                </h3>
+                
+                <div class="grid grid-cols-5 gap-2" id="nav-grid">
+                    <!-- Javascript will populate the 40 buttons -->
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span class="flex items-center space-x-1">
+                        <span class="w-2.5 h-2.5 rounded bg-blue-600 block"></span>
+                        <span>Aktif</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <span class="w-2.5 h-2.5 rounded bg-emerald-600 block"></span>
+                        <span>Selesai</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <span class="w-2.5 h-2.5 rounded bg-amber-500 block"></span>
+                        <span>Ragu</span>
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Side (Question Panel & Feynman Coach) -->
+        <section class="col-span-1 lg:col-span-3 flex flex-col space-y-6 order-1 lg:order-2">
+            
+            <!-- Mode Selector Switcher -->
+            <div class="bg-slate-950 p-2 rounded-2xl border border-slate-800 flex space-x-2">
+                <button onclick="switchMode('latihan')" id="btn-mode-latihan" class="flex-1 py-3 text-center rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg">
+                    <i class="fa-solid fa-graduation-cap mr-1.5"></i> Mode Latihan (Feedback Instan)
+                </button>
+                <button onclick="switchMode('ujian')" id="btn-mode-ujian" class="flex-1 py-3 text-center rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all duration-200 hover:bg-slate-900">
+                    <i class="fa-solid fa-bolt mr-1.5"></i> Mode Ujian Asli (Tanpa Pembahasan)
+                </button>
+            </div>
+
+            <!-- Quiz Card Box -->
+            <div class="bg-slate-950 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-2xl"></div>
+
+                <!-- Element/Category Header -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <span id="question-category" class="bg-indigo-950 border border-indigo-800 text-indigo-400 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl">
+                        KATEGORI SOAL
+                    </span>
+                    <span id="question-number-display" class="text-xs font-black text-slate-500 uppercase tracking-widest">
+                        SOAL 1 DARI 40
+                    </span>
+                </div>
+
+                <!-- Question Text -->
+                <div class="mb-8">
+                    <h2 id="question-text" class="text-base sm:text-lg font-extrabold text-slate-100 leading-relaxed">
+                        Memuat butir pertanyaan...
+                    </h2>
+                </div>
+
+                <!-- Answers Options Area -->
+                <div class="space-y-3.5" id="options-container">
+                    <!-- Javascript will inject options dynamically -->
+                </div>
+
+                <!-- Interactive Explanation / Feynman Coach Box -->
+                <div id="explanation-box" class="hidden mt-8 p-5 bg-slate-900 border border-blue-900/40 rounded-2xl">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-blue-950/80 p-2 rounded-lg border border-blue-800 text-blue-400">
+                            <i class="fa-solid fa-user-ninja text-sm sm:text-base"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black uppercase text-blue-400 tracking-wider mb-1">Analogi Feynman (Kunci Pemahaman)</h4>
+                            <p id="explanation-text" class="text-xs text-slate-300 leading-relaxed font-medium">
+                                Penjelasan analogi sederhana...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Bottom Bar -->
+                <div class="mt-8 pt-6 border-t border-slate-900 flex justify-between items-center flex-wrap gap-4">
+                    <div class="flex space-x-2">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all">
+                            <i class="fa-solid fa-arrow-left mr-1.5"></i> Kiri
+                        </button>
+                        <button id="btn-next" onclick="navigateQuestion(1)" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all">
+                            Kanan <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex space-x-2 w-full sm:w-auto justify-end">
+                        <button id="btn-mark-doubt" onclick="toggleDoubt()" class="bg-slate-900 hover:bg-amber-950/50 hover:border-amber-700 border border-slate-800 text-amber-500 px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5">
+                            <i class="fa-regular fa-bookmark"></i>
+                            <span>Ragu-ragu</span>
+                        </button>
+                        <button id="btn-submit-exam" onclick="finishExam()" class="hidden bg-gradient-to-tr from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition-all">
+                            Selesai & Kumpulkan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Diagnosis Result -->
+    <div id="result-modal" class="fixed inset-0 bg-slate-950/90 z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <div class="absolute top-5 right-5">
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="text-center mb-6">
+                <div class="inline-block bg-blue-950/50 border border-blue-800 p-4 rounded-full mb-3 text-blue-400 text-3xl">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="text-2xl font-black tracking-wide text-white">Diagnosis Hasil Ujian</h2>
+                <p class="text-xs text-slate-400">Analisis penguasaan materi Pancasila Anda</p>
+            </div>
+
+            <!-- Score Display -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div class="bg-slate-950 border border-slate-800 p-5 rounded-2xl text-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Skor Akhir</span>
+                    <span id="modal-score" class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">0 / 100</span>
+                </div>
+                <div class="bg-slate-950 border border-slate-800 p-5 rounded-2xl text-center flex flex-col justify-center items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Badge Karakter</span>
+                    <span id="modal-badge" class="text-sm font-black text-emerald-400 bg-emerald-950/50 border border-emerald-800/60 px-3 py-1.5 rounded-xl">Warga Negara Teladan</span>
+                </div>
+            </div>
+
+            <!-- Element Performance Breakdown -->
+            <div class="space-y-4 mb-6">
+                <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider">Performa Berdasarkan Elemen PPKn</h3>
+                
+                <div class="space-y-3" id="element-breakdown-container">
+                    <!-- JS generated items -->
+                </div>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="restartExam()" class="flex-1 bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
+                    Ulangi Ujian
+                </button>
+                <button onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all">
+                    Tutup Hasil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive JS Logic -->
+    <script>
+        // Database 40 Soal PPKn Berdasarkan Indikator Blueprint SMKN 1 Cimahi
+        const questionsDatabase = [
+            // Elemen Pancasila (1-5)
+            {
+                id: 1,
+                category: "Elemen 1: Pancasila",
+                question: "Sila pertama 'Ketuhanan Yang Maha Esa' diposisikan sebagai fundamen moral dan spiritual yang menjiwai seluruh sila lainnya dalam Pancasila. Makna filosofis utama dari kedudukan sila pertama ini adalah...",
+                options: [
+                    "Sila pertama merupakan landasan mutlak yang menjiwai, mendasari, dan memandu moralitas seluruh penyelenggaraan negara",
+                    "Negara Indonesia wajib melarang segala aktivitas keagamaan di luar enam agama resmi",
+                    "Penyelenggaraan negara sepenuhnya dilaksanakan berdasarkan hukum dari salah satu agama mayoritas",
+                    "Seluruh sila lainnya dalam Pancasila dapat berdiri sendiri secara independen tanpa keterikatan nilai ketuhanan",
+                    "Pancasila tidak mengikat warga negara yang memilih untuk tidak mempercayai keberadaan Tuhan"
+                ],
+                correctIndex: 0,
+                feynman: "Sila pertama itu seperti fondasi gedung pencakar langit. Gedung tidak akan berdiri kokoh dan lurus tanpa fondasi dasar yang kuat menopang semua lantai di atasnya."
+            },
+            {
+                id: 2,
+                category: "Elemen 1: Pancasila",
+                question: "Pancasila digambarkan sebagai sistem nilai yang bersifat organis, bulat, dan utuh. Maksud dari keterkaitan antarsila Pancasila yang utuh tersebut adalah...",
+                options: [
+                    "Sila-sila Pancasila terpisah satu sama lain dan dapat diamalkan secara bergantian tergantung kepentingan praktis",
+                    "Sila-sila Pancasila merupakan satu kesatuan sistematis di mana setiap sila saling menjiwai, membatasi, dan mengkualifikasi satu sama lain",
+                    "Setiap sila memiliki tingkatan kedudukan hukum yang berbeda-beda di mana sila pertama memiliki kasta tertinggi",
+                    "Pengamalan sila-sila Pancasila harus diurutkan secara kaku dari sila kesatu sampai kelima dalam kehidupan sehari-hari",
+                    "Sila kelima tidak memiliki keterkaitan hukum dan spiritual dengan sila pertama Pancasila"
+                ],
+                correctIndex: 1,
+                feynman: "Pancasila itu ibarat organ tubuh manusia. Jantung, paru-paru, dan otak bekerja bersama sebagai satu sistem hidup yang utuh. Satunya terganggu, seluruh sistem tubuh akan ikut rusak."
+            },
+            {
+                id: 3,
+                category: "Elemen 1: Pancasila",
+                question: "Di era kemajuan teknologi informasi, tantangan terbesar pengamalan Pancasila dalam kehidupan global adalah masuknya paham-paham yang tidak selaras dengan nilai luhur bangsa. Contoh tindakan nyata dalam lingkungan masyarakat yang mencerminkan pengamalan sila ketiga di era globalisasi adalah...",
+                options: [
+                    "Menggunakan dan mempromosikan produk lokal buatan dalam negeri serta melestarikan budaya gotong royong warga",
+                    "Mempelajari dan menerapkan paham individualisme asing dalam mengelola usaha bisnis pribadi",
+                    "Melarang segala jenis bentuk interaksi budaya asing masuk ke dalam wilayah pemukiman",
+                    "Membuat gerakan penolakan terhadap pemanfaatan teknologi internet di lingkungan sekolah",
+                    "Melakukan kampanye politik yang menuntut daerah otonom melepaskan diri dari NKRI"
+                ],
+                correctIndex: 0,
+                feynman: "Membeli produk lokal itu seperti menyiram tanaman di kebun kita sendiri. Di tengah badai globalisasi, kita harus menjaga kebun kita tetap subur dan kokoh bersama."
+            },
+            {
+                id: 4,
+                category: "Elemen 1: Pancasila",
+                question: "Peluang besar penerapan nilai-nilai Pancasila bagi generasi muda di kancah global melalui pemanfaatan internet dan media sosial adalah...",
+                options: [
+                    "Mengenalkan nilai luhur kerukunan, toleransi, dan gotong royong bangsa Indonesia ke dunia internasional",
+                    "Mengadopsi seluruh gaya hidup bebas pergaulan luar negeri agar dinilai modern",
+                    "Melakukan debat kusir secara terbuka untuk menjelek-jelekkan ideologi negara lain",
+                    "Memperluas jejaring bisnis ilegal tanpa terdeteksi oleh sistem hukum pemerintah",
+                    "Menyalin (plagiasi) secara penuh karya ilmiah buatan ilmuwan asing tanpa izin"
+                ],
+                correctIndex: 0,
+                feynman: "Media sosial adalah panggung teater dunia. Generasi muda adalah aktornya yang bertugas mementaskan pertunjukan indah tentang kerukunan dan kedamaian Pancasila."
+            },
+            {
+                id: 5,
+                category: "Elemen 1: Pancasila",
+                question: "Salah satu tantangan berat penerapan Pancasila di era modern adalah fenomena radikalisme digital. Sikap preventif paling tepat bagi seorang pelajar Pancasila agar terhindar dari infiltrasi paham radikal di media sosial adalah...",
+                options: [
+                    "Menganalisis secara kritis setiap informasi keagamaan atau ideologi yang diterima sebelum memercayainya",
+                    "Menutup semua akun media sosial pribadi dan tidak mau menggunakan internet",
+                    "Mengikuti seluruh ajakan aksi massa di internet yang mengatasnamakan pembelaan agama",
+                    "Menyerang balik kelompok yang dituduh radikal menggunakan kata-kata kasar dan perundungan siber",
+                    "Pasif dan acuh tak acuh terhadap segala bentuk isu ideologi negara yang berkembang"
+                ],
+                correctIndex: 0,
+                feynman: "Berpikir kritis itu seperti menyaring air keruh. Kita harus menyaringnya berkali-kali menggunakan logika Pancasila agar kotorannya tertinggal dan hanya air bersih yang kita minum."
+            },
+            // Elemen UUD NRI 1945 & Demokrasi (6-10)
+            {
+                id: 6,
+                category: "Elemen 2: UUD NRI 1945",
+                question: "Sebuah negara dikategorikan sebagai negara demokratis apabila memenuhi pilar demokrasi tertentu. Salah satu indikator pokok sistem demokratis menurut pakar politik adalah...",
+                options: [
+                    "Adanya rotasi kekuasaan secara teratur yang berjalan damai dan adil melalui mekanisme Pemilihan Umum",
+                    "Pemusatan seluruh kekuasaan pemerintahan di tangan satu pemimpin tertinggi tanpa batas waktu",
+                    "Pembatasan kebebasan pers dan pelarangan aktivitas kritik massal terhadap kebijakan hukum",
+                    "Rekrutmen jabatan birokrasi pemerintahan yang tertutup bagi masyarakat umum",
+                    "Penyelesaian sengketa hukum pidana sepenuhnya ditentukan oleh kekuasaan presiden"
+                ],
+                correctIndex: 0,
+                feynman: "Rotasi kekuasaan itu seperti sirkulasi air di kolam. Air harus terus mengalir dan berganti secara berkala agar kolam tidak kotor, bau, dan merusak kehidupan ikan di dalamnya."
+            },
+            {
+                id: 7,
+                category: "Elemen 2: UUD NRI 1945",
+                question: "Pilar demokrasi konstitusional menuntut adanya pemenuhan hak-hak dasar warga negara. Salah satu perwujudan konkret dari hak dasar tersebut dalam sistem ketatanegaraan Indonesia menurut UUD 1945 adalah...",
+                options: [
+                    "Jaminan kebebasan berserikat, berkumpul, mengeluarkan pendapat, dan memeluk keyakinan agama",
+                    "Kebebasan tanpa batas untuk melakukan tindakan main hakim sendiri saat terjadi tindak kriminal",
+                    "Hak istimewa bagi kelompok mayoritas untuk memperoleh fasilitas bebas pajak dari pemerintah",
+                    "Kewajiban negara untuk selalu menyetujui seluruh keinginan massa yang melakukan demonstrasi fisik",
+                    "Kebebasan warga negara untuk memilih tidak mematuhi hukum pidana yang berlaku"
+                ],
+                correctIndex: 0,
+                feynman: "Hak dasar itu seperti oksigen gratis untuk semua orang. Di negara demokratis, jaminan hak berbicara dan beribadah harus bisa dihirup bebas oleh setiap warga tanpa diskriminasi."
+            },
+            {
+                id: 8,
+                category: "Elemen 2: UUD NRI 1945",
+                question: "Sejarah ketatanegaraan Indonesia mencatat adanya dinamika silih berganti konstitusi. Urutan periodisasi pemberlakuan konstitusi yang benar semenjak proklamasi kemerdekaan adalah...",
+                options: [
+                    "UUD 1945 (18 Agt 1945 - 27 Des 1949) → Konstitusi RIS 1949 → UUDS 1950 → UUD 1945 (Masa Dekrit s.d. Amandemen)",
+                    "UUD 1945 → UUDS 1950 → Konstitusi RIS 1949 → UUD NRI Tahun 1945 Amandemen",
+                    "Konstitusi RIS 1949 → UUD 1945 → UUDS 1950 → UUD NRI Tahun 1945 Amandemen",
+                    "UUD 1945 → UUD NRI Tahun 1945 Amandemen → Konstitusi RIS 1949 → UUDS 1950",
+                    "UUDS 1950 → Konstitusi RIS 1949 → UUD 1945 → UUD NRI Tahun 1945 Amandemen"
+                ],
+                correctIndex: 0,
+                feynman: "Silih bergantinya konstitusi itu ibarat Indonesia mencoba beberapa model pakaian yang berbeda seiring berjalannya usia tumbuh kembang, hingga akhirnya menemukan pakaian yang paling pas dengan postur tubuhnya."
+            },
+            {
+                id: 9,
+                category: "Elemen 2: UUD NRI 1945",
+                question: "Di era keterbukaan informasi digital saat ini, praktik penerapan demokrasi yang sehat dalam kehidupan bernegara harus tercermin dari sikap...",
+                options: [
+                    "Pemanfaatan media sosial secara bijak dengan menyuarakan aspirasi konstruktif dan memverifikasi kebenaran info (anti-hoaks)",
+                    "Membuat kampanye perundungan siber secara massal kepada tokoh-tokoh yang tidak disukai",
+                    "Menyebarkan rumor atau dokumen rahasia negara secara bebas tanpa dasar hukum yang jelas",
+                    "Memperbanyak jumlah akun palsu (akun bot) untuk menggiring opini publik demi kepentingan pribadi",
+                    "Menolak segala bentuk masukan, kritik, atau saran perbaikan kinerja dari masyarakat luar"
+                ],
+                correctIndex: 0,
+                feynman: "Medsos di era demokrasi itu ibarat pasar terbuka. Kita harus berdagang barang berkualitas (fakta & kesantunan) dan menolak barang palsu (hoaks) demi kebersihan pasar bersama."
+            },
+            {
+                id: 10,
+                category: "Elemen 2: UUD NRI 1945",
+                question: "Amandemen UUD NRI Tahun 1945 dilakukan sebanyak empat kali (1999-2002) paska tumbangnya Orde Baru. Salah satu fokus utama perubahan aturan pada Amandemen tersebut adalah...",
+                options: [
+                    "Membatasi masa jabatan presiden maksimal dua periode dan memperkuat pengawasan legislatif (checks and balances)",
+                    "Mengubah bentuk Negara Kesatuan Republik Indonesia (NKRI) menjadi bentuk kerajaan monarki",
+                    "Menghapuskan keberadaan lembaga Mahkamah Agung dan Dewan Perwakilan Rakyat",
+                    "Memberikan kekuasaan legislasi penuh mutlak tanpa batas kepada presiden",
+                    "Menyatukan posisi kepala negara dan kepala pemerintahan di tangan MPR"
+                ],
+                correctIndex: 0,
+                feynman: "Amandemen itu ibarat memasang rem cakram baru pada kendaraan yang mesinnya terlalu kencang. Rem dipasang agar presiden tidak melaju kencang tanpa kendali hingga menabrak batas demokrasi."
+            },
+            // Elemen Bhinneka Tunggal Ika (11-30) - 20 Soal total
+            {
+                id: 11,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Struktur keberagaman masyarakat Indonesia menyimpan potensi gesekan horizontal. Konflik antar-suku umumnya dipicu oleh adanya penyakit sosial kemasyarakatan berupa...",
+                options: [
+                    "Adanya stereotip negatif, prasangka buruk, dan sentimen etnis di tengah pergaulan sosial sehari-hari",
+                    "Perbedaan tingkat keterampilan teknologi informatika antarpelajar",
+                    "Ketidakmerataan jangkauan jaringan internet di beberapa daerah pelosok",
+                    "Pemberian bantuan modal usaha yang merata dari kementerian koperasi",
+                    "Pelaksanaan musyawarah warga yang berjalan tertib dan dinamis"
+                ],
+                correctIndex: 0,
+                feynman: "Konflik antar-suku seringkali bermula dari kacamata buram (prasangka) yang kita pakai saat melihat orang lain. Kita harus melepas kacamata kotor tersebut agar bisa bersaudara dengan jernih."
+            },
+            {
+                id: 12,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Kesenjangan sosial-ekonomi yang ekstrem dapat memicu konflik horizontal di masyarakat majemuk. Ketegangan sosial ini biasanya timbul akibat faktor...",
+                options: [
+                    "Kecemburuan sosial akibat distribusi kesejahteraan sosial dan kesempatan ekonomi yang tidak merata",
+                    "Meningkatnya angka literasi keuangan digital warga secara nasional",
+                    "Adanya kerja sama ekonomi inklusif yang melibatkan pengusaha lokal",
+                    "Pemberian beasiswa pendidikan yang menyasar pelajar kurang mampu",
+                    "Kepatuhan pengusaha industri dalam membayarkan upah sesuai UMR"
+                ],
+                correctIndex: 0,
+                feynman: "Kesenjangan ekonomi ekstrem itu seperti salah satu penumpang kapal mendapat hidangan mewah berlebih, sementara penumpang lain kelaparan. Hal ini pasti memicu protes dan keributan di dalam dek kapal."
+            },
+            {
+                id: 13,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Konflik agraria seringkali terjadi di beberapa daerah di Indonesia. Masalah pokok yang memicu terjadinya sengketa atau konflik agraria adalah...",
+                options: [
+                    "Sengketa tumpang tindih klaim hak kepemilikan dan pemanfaatan lahan atau tanah",
+                    "Perbedaan jumlah kuota penerimaan pupuk bersubsidi bagi kelompok tani",
+                    "Adanya perbedaan teknologi mekanisasi alat pertanian antar-provinsi",
+                    "Tuntutan pembagian hasil panen yang tidak merata antara pemilik sawah",
+                    "Perubahan fungsi hutan lindung menjadi kawasan konservasi hewan purba"
+                ],
+                correctIndex: 0,
+                feynman: "Agraria itu intinya sengketa tanah. Ibarat dua orang yang saling berebut selembar karpet untuk diduduki, masing-masing merasa paling berhak atas tanah pijakan tersebut."
+            },
+            {
+                id: 14,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Ketika terjadi sengketa lahan antara dua warga desa, kedua pihak memilih untuk berdialog langsung secara kekeluargaan untuk merumuskan mufakat tanpa melibatkan orang ketiga. Metode penyelesaian konflik ini disebut...",
+                options: [
+                    "Negosiasi",
+                    "Mediasi",
+                    "Arbitrase",
+                    "Rekonsiliasi",
+                    "Konsolidasi"
+                ],
+                correctIndex: 0,
+                feynman: "Negosiasi itu ibarat kamu tawar-menawar harga barang langsung dengan pedagangnya di pasar. Hanya ada kamu dan pedagang, tanpa ada makelar atau penengah di antara kalian."
+            },
+            {
+                id: 15,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Penyelesaian perselisihan batas pekarangan rumah antara Pak Budi dan Pak Jono dilakukan dengan menghadirkan ketua RT sebagai pihak ketiga yang netral untuk memberikan masukan solusi, namun keputusan akhir tetap di tangan Pak Budi dan Pak Jono. Metode ini disebut...",
+                options: [
+                    "Mediasi",
+                    "Negosiasi",
+                    "Arbitrase",
+                    "Kompensasi",
+                    "Adjudikasi"
+                ],
+                correctIndex: 0,
+                feynman: "Mediasi melibatkan pihak ketiga bernama mediator (seperti Pak RT). Ia mirip wasit yang memberikan saran, tapi tidak berhak memaksa kalian untuk berdamai jika kalian belum sepakat sendiri."
+            },
+            {
+                id: 16,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Jika terjadi sengketa kontrak kerja antara buruh dan manajemen korporasi, kedua pihak menyerahkan keputusan penyelesaian masalah kepada Dinas Tenaga Kerja yang bertindak sebagai pihak ketiga yang memiliki wewenang hukum untuk mengambil keputusan mutlak yang mengikat. Metode ini disebut...",
+                options: [
+                    "Arbitrase",
+                    "Mediasi",
+                    "Negosiasi",
+                    "Konsiliasi",
+                    "Asimilasi"
+                ],
+                correctIndex: 0,
+                feynman: "Arbitrase melibatkan arbiter (hakim pemutus). Keputusan arbiter itu mutlak dan wajib ditaati, ibarat keputusan wasit sepak bola memberikan kartu merah yang tidak bisa diganggu gugat."
+            },
+            {
+                id: 17,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Sikap mental negatif di mana seorang warga masyarakat selalu menempatkan kepentingan pribadi atau golongannya sendiri di atas kepentingan publik atau bangsa disebut...",
+                options: [
+                    "Egoisme",
+                    "Etnosentrisme",
+                    "Eksklusivisme",
+                    "Multikulturalisme",
+                    "Chauvinisme"
+                ],
+                correctIndex: 0,
+                feynman: "Egoisme itu ibarat penumpang bis yang memonopoli tiga kursi sekaligus untuk menaruh tas belanjanya, sementara penumpang tua di sebelahnya terpaksa berdiri sepanjang jalan."
+            },
+            {
+                id: 18,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Seorang pemuda menganggap bahwa adat istiadat dan budayanya sendirilah yang paling hebat, maju, dan beradab di dunia, serta meremehkan kebudayaan daerah lain. Sikap pemuda ini mencerminkan paham...",
+                options: [
+                    "Etnosentrisme",
+                    "Eksklusivisme",
+                    "Egoisme",
+                    "Pluralisme",
+                    "Asimilasi"
+                ],
+                correctIndex: 0,
+                feynman: "Etnosentrisme itu ibarat memakai kacamata satu warna (budayanya sendiri) lalu mengejek semua warna lain di taman bunga sebagai warna yang jelek dan salah."
+            },
+            {
+                id: 19,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Sebuah komunitas memilih untuk mengisolasi diri, menolak bergaul dengan kelompok luar, dan menutup diri dari program pembangunan nasional demi menjaga kemurnian kelompok mereka. Sikap komunitas ini merupakan bentuk...",
+                options: [
+                    "Eksklusivisme",
+                    "Etnosentrisme",
+                    "Egoisme",
+                    "Integrasi",
+                    "Sosialisasi"
+                ],
+                correctIndex: 0,
+                feynman: "Eksklusivisme itu ibarat mendirikan benteng tinggi mengitari rumahmu di tengah perumahan, lalu mengunci rapat gerbangnya karena tidak mau bertetangga dengan warga luar."
+            },
+            {
+                id: 20,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Penyelesaian konflik horizontal dalam masyarakat majemuk harus mengacu pada nilai Pancasila. Strategi penyelesaian jangka panjang yang paling efektif membangun harmoni adalah...",
+                options: [
+                    "Mengembangkan pendidikan multikultural, sikap inklusif, toleransi, dan dialog antar-budaya sejak dini",
+                    "Melarang segala jenis festival budaya daerah agar tidak memicu kecemburuan",
+                    "Memisahkan wilayah pemukiman warga berdasarkan suku dan agamanya secara ketat",
+                    "Menerapkan tindakan hukum represif militer di daerah yang rawan gesekan sosial",
+                    "Menuntut salah satu pihak yang berkonflik untuk meninggalkan daerah sengketa"
+                ],
+                correctIndex: 0,
+                feynman: "Menanam tanaman toleransi sejak kecil itu jauh lebih baik daripada sibuk memadamkan api kebakaran hutan saat pohon konflik sosial sudah telanjur tumbuh besar dan terbakar."
+            },
+            {
+                id: 21,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Prinsip dasar keadilan sosial dalam harmoni keberagaman menuntut agar kelompok mayoritas di suatu wilayah wajib untuk...",
+                options: [
+                    "Melindungi, menghargai hak asasi, dan memberikan ruang ekspresi bagi kelompok minoritas",
+                    "Memaksa kelompok minoritas untuk melebur secara mutlak mengikuti seluruh adat mayoritas",
+                    "Membatasi hak mendirikan tempat ibadah bagi kelompok yang berbeda keyakinan",
+                    "Mendominasi seluruh posisi penting di pemerintahan otonomi daerah tanpa celah bagi minoritas",
+                    "Melarang masuknya investasi dari luar daerah demi menjaga kemurnian ekonomi lokal"
+                ],
+                correctIndex: 0,
+                feynman: "Mayoritas melindungi minoritas itu ibarat kakak tertua yang menjaga adiknya yang masih kecil agar bisa bermain bersama dengan aman, bukan malah merundung atau melarang adiknya ikut bermain."
+            },
+            {
+                id: 22,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Ketika terjadi sengketa lahan perkebunan sawit antara masyarakat adat dan sebuah korporasi swasta, tindakan solutif yang berkeadilan berdasarkan nilai Pancasila adalah...",
+                options: [
+                    "Melakukan mediasi atau arbitrase yang difasilitasi kementerian agraria secara transparan berdasarkan dokumen hukum sah",
+                    "Mendukung aksi kekerasan fisik sepihak dari buruh tani untuk mengusir korporasi secara paksa",
+                    "Membela kepentingan korporasi secara penuh karena sumbangsih pajaknya yang besar bagi daerah",
+                    "Mendiamkan masalah tersebut hingga salah satu pihak menyerah dengan sendirinya",
+                    "Melakukan privatisasi lahan secara sepihak tanpa memedulikan klaim hak adat warga"
+                ],
+                correctIndex: 0,
+                feynman: "Sengketa lahan harus diselesaikan di meja hijau secara transparan dengan dokumen sah sebagai kompas keadilan, agar tidak ada hukum rimba (yang kuat yang menang) yang berlaku."
+            },
+            {
+                id: 23,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Wujud kontribusi nyata seorang pelajar dalam menjaga persatuan dan kesatuan bangsa di lingkungan sekolah yang multikultural adalah...",
+                options: [
+                    "Berteman dengan siapa saja tanpa membedakan suku, agama, ras, maupun latar belakang ekonomi sosialnya",
+                    "Membuat lingkaran pertemanan (geng) eksklusif yang hanya diisi oleh teman sesuku saja",
+                    "Menolak berdiskusi kelompok jika ditunjuk sekelompok dengan teman yang berbeda keyakinan",
+                    "Melakukan perundungan verbal secara santai terhadap dialek bicara teman daerah luar",
+                    "Sikap pasif dan acuh tak acuh ketika terjadi kasus intoleransi di kelasnya"
+                ],
+                correctIndex: 0,
+                feynman: "Berteman inklusif itu ibarat merajut benang beraneka warna menjadi selembar kain tenun yang indah. Setiap warna saling menguatkan anyaman kain tersebut."
+            },
+            {
+                id: 24,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Salah satu dampak negatif paling membahayakan dari merebaknya paham etnosentrisme di era globalisasi bagi kelangsungan hidup NKRI adalah...",
+                options: [
+                    "Memicu konflik sosial berkepanjangan dan melemahnya integrasi nasional bangsa",
+                    "Meningkatkan angka kunjungan wisatawan mancanegara ke daerah pedalaman",
+                    "Mempercepat penyerapan teknologi mekanisasi pertanian di wilayah pedesaan",
+                    "Mendorong peningkatan kualitas produksi produk kerajinan anyaman nasional",
+                    "Menurunkan angka pengangguran di sektor industri pertambangan daerah"
+                ],
+                correctIndex: 0,
+                feynman: "Etnosentrisme yang dibiarkan tumbuh itu ibarat menyiram bensin di atas sekam kering. Gesekan kecil saja bisa membakar habis bangunan persatuan bangsa yang kita rawat selama ini."
+            },
+            {
+                id: 25,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Di bawah ini contoh kasus gesekan sosial akibat sengketa agraria yang membutuhkan penanganan solutif dengan metode arbitrase adalah...",
+                options: [
+                    "Sengketa kepemilikan hutan adat antara komunitas lokal dan badan usaha milik negara yang tidak kunjung usai di tingkat mediasi",
+                    "Perbedaan pendapat antar warga desa dalam menentukan jadwal ronda malam mingguan",
+                    "Kasus pencurian kecil buah kelapa milik tetangga pekarangan sebelah",
+                    "Perselisihan urusan warisan sebidang tanah kecil di dalam satu lingkaran keluarga inti",
+                    "Tuntutan pembagian jatah air bersih di komplek perumahan perkotaan baru"
+                ],
+                correctIndex: 0,
+                feynman: "Ketika mediasi (rembukan damai dengan saran) sudah jalan buntu, kita butuh arbitrase (hakim pemutus sah) agar sengketa lahan memiliki status hukum mengikat dan final."
+            },
+            // Urutan navigasi sesuai kisi-kisi: 26, 27, 28, 31, 32, 33, 35, 36, 38, 39, 40 (Elemen Bhinneka Tunggal Ika)
+            {
+                id: 26,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Perwujudan hidup berdampingan secara damai dalam masyarakat yang heterogen dapat dilakukan dengan membiasakan sikap...",
+                options: [
+                    "Toleransi aktif dengan memberikan ucapan selamat hari raya keagamaan serta menjaga ketertiban umum bersama",
+                    "Asimilasi paksa yang melarang penggunaan bahasa daerah asli di ruang publik",
+                    "Melarang pelaksanaan ritual ibadah keagamaan di wilayah yang bukan mayoritasnya",
+                    "Membatasi hak berwirausaha bagi pendatang baru dari luar daerah provinsi",
+                    "Menganggap acuh tak acuh keberadaan warga transmigran yang tinggal berdampingan"
+                ],
+                correctIndex: 0,
+                feynman: "Toleransi aktif itu seperti membiarkan bunga matahari dan mawar tumbuh bersama di satu taman. Mereka tidak saling merusak warna masing-masing, melainkan mempercantik taman."
+            },
+            {
+                id: 27,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Upaya menangkal pengaruh buruk radikalisme berbasis sentimen agama di tingkat lingkungan rukun tetangga (RT) yang paling tepat adalah...",
+                options: [
+                    "Mengadakan pengajian lintas agama dan dialog kebangsaan secara rutin untuk mempererat silaturahmi sosial",
+                    "Melakukan razia dan pengusiran paksa terhadap warga kontrakan baru tanpa dasar hukum",
+                    "Melarang penyebaran informasi keagamaan apa pun di wilayah komplek perumahan",
+                    "Memasang kawat berduri di sekeliling wilayah perbatasan rukun tetangga sebelah",
+                    "Melaporkan semua warga yang berpenampilan berbeda ke aparat intelijen keamanan"
+                ],
+                correctIndex: 0,
+                feynman: "Silaturahmi sosial yang erat ibarat anyaman kawat pelindung. Paham radikal tidak akan bisa menyusup ke lingkungan warga jika anyaman kebersamaan warganya sangat rapat."
+            },
+            {
+                id: 28,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Keberhasilan merawat harmoni dalam kebhinnekaan memberikan manfaat sosiologis yang sangat besar bagi kelangsungan pembangunan nasional, yaitu...",
+                options: [
+                    "Terciptanya stabilitas nasional yang kondusif sehingga pembangunan ekonomi berjalan lancar tanpa hambatan konflik",
+                    "Meningkatnya utang luar negeri negara akibat bantuan sosial pembangunan",
+                    "Melemahnya kontrol pertahanan keamanan perbatasan akibat pengalihan dana operasional militer",
+                    "Terjadinya penyeragaman kebudayaan daerah menjadi satu kebudayaan tunggal secara nasional",
+                    "Menurunnya tingkat kepedulian warga terhadap kelestarian ekosistem alam sekitar"
+                ],
+                correctIndex: 0,
+                feynman: "Kerukunan warganya adalah modal utama pembangunan berjalan mulus. Jika kapal tidak bergoyang akibat pertikaian internal kru, nahkoda bisa fokus mengemudikan kapal melaju cepat ke pelabuhan tujuan."
+            },
+            // Elemen NKRI & ATHG (Soal 29, 30, 34, 37, dan 20-25 untuk urutan NKRI)
+            {
+                id: 29,
+                category: "Elemen 4: NKRI",
+                question: "Penerapan sistem desentralisasi dan otonomi daerah dalam bingkai Negara Kesatuan Republik Indonesia (NKRI) memiliki esensi dasar untuk...",
+                options: [
+                    "Memberikan hak otonom bagi daerah untuk mengurus rumah tangga daerahnya secara kreatif sesuai batas hukum koridor NKRI",
+                    "Membiarkan daerah otonom membentuk sistem militer bersenjata mandiri terpisah dari pusat",
+                    "Mempermudah daerah otonom melepaskan diri menjadi negara merdeka jika perekonomiannya sudah mandiri",
+                    "Memusatkan seluruh kendali anggaran belanja pembangunan daerah ke tangan gubernur tanpa campur tangan bupati",
+                    "Menghapuskan keberadaan batas wilayah administrasi pemerintahan antar-provinsi secara nasional"
+                ],
+                correctIndex: 0,
+                feynman: "Otonomi daerah itu seperti orang tua yang memberikan uang saku mingguan kepada anaknya yang kuliah. Anak diberikan kebebasan mengatur menu makannya sendiri, namun tetap dalam pengawasan orang tua."
+            },
+            {
+                id: 30,
+                category: "Elemen 4: NKRI",
+                question: "Bela negara merupakan hak sekaligus kewajiban bagi seluruh warga negara Indonesia. Wujud tindakan bela negara bagi seorang pelajar SMK dalam kehidupan sehari-hari adalah...",
+                options: [
+                    "Belajar secara sungguh-sungguh untuk menguasai kompetensi teknologi agar mampu berkontribusi bagi kemandirian bangsa",
+                    "Melakukan demonstrasi fisik secara anarkis menuntut penurunan harga bahan pokok kebutuhan",
+                    "Mengikuti latihan perang bersenjata ilegal bersama organisasi kemasyarakatan lokal",
+                    "Membagikan semua berita politik hangat di internet tanpa mengecek keabsahan sumber beritanya",
+                    "Menolak menggunakan produk luar negeri meskipun sangat dibutuhkan untuk proses praktik bengkel sekolah"
+                ],
+                correctIndex: 0,
+                feynman: "Bela negara zaman sekarang tidak harus angkat senjata. Menguasai keahlian praktik SMK secara mahir adalah bela negara modern untuk membebaskan bangsa kita dari ketergantungan teknologi asing."
+            },
+            {
+                id: 31,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Ketika terjadi sengketa batas wilayah tangkapan ikan antara nelayan lokal tradisional dan kapal industri swasta, tindakan mediasi yang paling tepat adalah...",
+                options: [
+                    "Dinas kelautan bertindak sebagai fasilitator netral untuk merumuskan zonasi wilayah tangkap ikan secara adil",
+                    "Nelayan lokal melakukan aksi pembakaran paksa terhadap kapal industri swasta yang melintas",
+                    "Pemerintah pusat memihak penuh kepada korporasi swasta karena modal investasinya besar",
+                    "Nelayan menghentikan aktivitas melaut secara permanen demi menghindari perselisihan fisik",
+                    "Menyelesaikan perselisihan dengan cara melakukan duel laut antarkepala kapal nelayan"
+                ],
+                correctIndex: 0,
+                feynman: "Fasilitator dinas perikanan di sini bertindak sebagai juru damai yang membentangkan peta zonasi laut agar kedua belah pihak mendapatkan porsi rezeki yang adil dan legal."
+            },
+            {
+                id: 32,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Perbedaan mendasar yang paling esensial antara metode penyelesaian konflik Mediasi dan Arbitrase adalah pada aspek...",
+                options: [
+                    "Kewenangan pengambilan keputusan hukum di mana pada Arbitrase keputusan pihak ketiga bersifat mutlak mengikat",
+                    "Keterlibatan aparat penegak hukum bersenjata dalam mendampingi jalannya proses sidang konflik",
+                    "Jumlah modal kompensasi finansial yang harus dibayarkan oleh salah satu pihak yang bersengketa",
+                    "Waktu pelaksanaan sidang yang dibatasi ketat oleh undang-undang hukum pidana nasional",
+                    "Sifat kerahasiaan proses rembukan sengketa yang tertutup bagi masyarakat luar"
+                ],
+                correctIndex: 0,
+                feynman: "Mediasi itu penengahnya memberi saran (keputusan di tangan kalian), sedangkan Arbitrase penengahnya menetapkan vonis hukum yang wajib kalian patuhi suka atau tidak suka."
+            },
+            {
+                id: 33,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Menghormati perbedaan dialek bahasa dan adat istiadat teman sekelas yang berasal dari luar daerah merupakan penerapan nilai Pancasila, khususnya...",
+                options: [
+                    "Sila ketiga, karena memperkokoh persatuan nasional di tengah keanekaragaman budaya bangsa",
+                    "Sila kesatu, karena meyakini bahwa dialek bahasa tersebut diciptakan oleh Tuhan Yang Maha Esa",
+                    "Sila kedua, karena memperlakukan teman dengan sopan santun tanpa membedakan warna kulit saja",
+                    "Sila keempat, karena menjunjung tinggi kedaulatan hak berpendapat teman di kelas",
+                    "Sila kelima, karena memberikan porsi keadilan sosial dalam pembagian nilai tugas kelompok"
+                ],
+                correctIndex: 0,
+                feynman: "Menghargai keberagaman dialek itu ibarat menyukai melodi alat musik tradisional yang berbeda-beda. Ketika dimainkan bersama secara serempak, nadanya menjadi simfoni musik yang indah."
+            },
+            {
+                id: 34,
+                category: "Elemen 4: NKRI",
+                question: "Pertahanan dan keamanan negara Indonesia menggunakan sistem Sishankamrata (Sistem Pertahanan Keamanan Rakyat Semesta). Karakteristik utama dari sistem Sishankamrata ini adalah...",
+                options: [
+                    "TNI dan POLRI sebagai kekuatan utama, didukung oleh seluruh rakyat Indonesia sebagai kekuatan pendukung",
+                    "Penyerahan tanggung jawab pertahanan keamanan negara sepenuhnya kepada sekutu militer asing",
+                    "Mewajibkan seluruh warga negara paruh baya untuk membeli dan memiliki senjata api pribadi",
+                    "Pembentukan pasukan militer khusus di tingkat desa yang dibiayai menggunakan alokasi dana desa otonom",
+                    "Penyelesaian konflik perbatasan negara sepenuhnya diserahkan kepada mahkamah internasional tanpa perlawanan"
+                ],
+                correctIndex: 0,
+                feynman: "Sishankamrata itu ibarat satu kampung menjaga keamanan ronda malam. TNI-Polri adalah hansip terlatihnya, sedangkan seluruh warga bertugas aktif meronda di pos ronda masing-masing."
+            },
+            {
+                id: 35,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Salah satu dampak negatif yang paling membahayakan dari merebaknya sikap eksklusivisme kelompok bagi integrasi sosial kemasyarakatan adalah...",
+                options: [
+                    "Munculnya sekat-sekat isolasi sosial, ketidakpedulian, dan hilangnya ruang interaksi sosial antarkelompok",
+                    "Meningkatnya laju pembangunan fasilitas kesehatan gratis secara inklusif",
+                    "Terjadinya asimilasi budaya yang sangat cepat antar-provinsi yang berdekatan",
+                    "Peningkatan kepekaan sosial gotong royong warga saat terjadi musibah bencana alam",
+                    "Kemudahan aparat penegak hukum dalam menangkap oknum provokator tawuran warga"
+                ],
+                correctIndex: 0,
+                feynman: "Eksklusivisme itu ibarat semua kelompok bertetangga membangun labirin dinding beton di halaman rumahnya masing-masing. Mereka tidak bisa saling melihat, menyapa, dan saling membantu."
+            },
+            {
+                id: 36,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Ketika merumuskan pembangunan fasilitas olahraga desa, ketua RW mengundang seluruh elemen pemuda, tokoh adat, dan perwakilan warga untuk bermusyawarah mufakat. Sikap demokratis warga yang benar dalam musyawarah adalah...",
+                options: [
+                    "Menyampaikan usulan pendapat secara santun, berlapang dada menerima hasil mufakat, dan menghargai usul pihak lain",
+                    "Memaksa ketua RW untuk hanya menyetujui usulan kelompok pemuda dambaan warganya sendiri",
+                    "Melakukan aksi walkout dan menjelek-jelekkan ketua RW di media sosial jika usulnya ditolak",
+                    "Menerima keputusan rapat dengan syarat kelompoknya mendapat kompensasi materi finansial",
+                    "Sikap pasif selama rapat namun aktif menyebarkan ketidakpuasan paska hasil rapat disepakati"
+                ],
+                correctIndex: 0,
+                feynman: "Musyawarah itu seperti merangkai puzzle bersama-sama. Kita harus menyusun kepingan puzzle (pendapat) secara hati-hati dan logis agar menghasilkan gambar (keputusan) yang utuh dan indah."
+            },
+            {
+                id: 37,
+                category: "Elemen 4: NKRI",
+                question: "Negara Indonesia diklasifikasikan sebagai negara kesatuan (desentralisasi). Karakteristik hukum tata negara kesatuan Indonesia ditegaskan dalam konstitusi UUD NRI 1945, khususnya pada...",
+                options: [
+                    "Pasal 1 ayat 1 yang menyatakan 'Negara Indonesia ialah Negara Kesatuan yang berbentuk Republik'",
+                    "Pasal 29 ayat 1 yang mengatur tentang dasar ketuhanan yang dianut oleh negara Indonesia",
+                    "Pasal 28 tentang jaminan hak berserikat dan berkumpul bagi warga negara",
+                    "Pasal 33 ayat 3 tentang penguasaan kekayaan bumi dan air oleh negara untuk rakyat",
+                    "Pasal 37 tentang mekanisme amandemen perubahan naskah konstitusi UUD"
+                ],
+                correctIndex: 0,
+                feynman: "Pasal 1 ayat 1 adalah KTP jati diri bangsa kita. Di sana terpatri segel emas bentuk negara kita adalah Kesatuan, bukan Serikat atau Federal."
+            },
+            {
+                id: 38,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Upaya solutif yang berkeadilan sosial dalam mengatasi potensi konflik akibat kesenjangan fasilitas infrastruktur antar-desa otonom adalah...",
+                options: [
+                    "Pemerintah daerah mengalokasikan program bantuan pembangunan secara merata berbasis skala prioritas kebutuhan desa tertinggal",
+                    "Melakukan pemotongan anggaran bantuan desa otonom yang paling produktif demi dialihkan ke daerah perkotaan",
+                    "Melarang warga desa otonom tertinggal menggunakan fasilitas infrastruktur milik desa otonom yang maju",
+                    "Menuntut warga desa otonom tertinggal melakukan swadaya mandiri penuh tanpa bantuan dana APBD daerah",
+                    "Melakukan penggabungan paksa (asimilasi) antar-desa otonom tanpa koordinasi dengan kepala warga setempat"
+                ],
+                correctIndex: 0,
+                feynman: "Pembangunan infrastruktur berkeadilan itu seperti membagi air minum merata kepada semua pelari maraton. Pelari yang paling lelah dan haus (desa tertinggal) wajib mendapat tegukan air prioritas pertama."
+            },
+            {
+                id: 39,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Penerapan perilaku gotong royong yang mencerminkan upaya memperkokoh integrasi sosial dalam kehidupan warga perumahan yang heterogen adalah...",
+                options: [
+                    "Melaksanakan kerja bakti berkala membersihkan saluran pembuangan air secara bersama-sama tanpa memandang sekat suku agama",
+                    "Menyewa jasa kontraktor swasta penuh untuk mengerjakan seluruh perbaikan fasilitas komplek tanpa keterlibatan warga",
+                    "Membatasi keterlibatan warga kontrakan dalam kegiatan kepanitiaan hari ulang tahun kemerdekaan",
+                    "Mengadakan iuran wajib bulanan yang jumlah nominalnya disamaratakan bagi seluruh tingkat ekonomi warga",
+                    "Menghindari interaksi fisik dengan warga luar komplek perumahan demi menjaga ketertiban internal"
+                ],
+                correctIndex: 0,
+                feynman: "Kerja bakti bersama itu ibarat merekatkan kembali batu bata pembatas perumahan menggunakan adonan semen kebersamaan, sehingga fondasi kerukunan warganya makin kokoh berdiri."
+            },
+            {
+                id: 40,
+                category: "Elemen 3: Bhinneka Tunggal Ika",
+                question: "Berdasarkan perspektif manajemen konflik sosial yang adil dan berkeadilan, setiap keputusan hukum yang diambil pihak ketiga dalam metode arbitrase wajib...",
+                options: [
+                    "Didasarkan atas dokumen bukti hukum yang sah, obyektif, transparan, serta menjunjung tinggi hak asasi manusia",
+                    "Mengutamakan kepentingan pemegang modal ekonomi terbesar demi kelangsungan stabilitas bisnis daerah",
+                    "Mengikuti seluruh instruksi atau opini politik massal yang berkembang hangat di media sosial siber",
+                    "Dibuat secara tertutup tanpa perlu dipublikasikan dokumen keputusannya kepada publik",
+                    "Memberikan keuntungan mutlak penuh bagi kelompok mayoritas asli daerah sengketa"
+                ],
+                correctIndex: 0,
+                feynman: "Keputusan arbiter itu ibarat timbangan dacin keadilan yang seimbang. Timbangan hanya bergerak memihak pada bandul kebenaran hukum (fakta bukti sah), bukan memihak pada bisikan kekuatan uang atau kuantitas massa."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let studyMode = "latihan"; // "latihan" atau "ujian"
+        let userAnswers = new Array(questionsDatabase.length).fill(null);
+        let doubtStatus = new Array(questionsDatabase.length).fill(false);
+        
+        // Pomodoro Timer State
+        let pomodoroTimer = null;
+        let pTimerSeconds = 25 * 60; // 25 Menit default
+        let isPomoRunning = false;
+
+        // Initialize Application on Window Load
+        window.onload = function() {
+            renderNavGrid();
+            loadQuestion(0);
+            updateStats();
+        };
+
+        // Render Navigation Grid Buttons (1-40)
+        function renderNavGrid() {
+            const grid = document.getElementById("nav-grid");
+            grid.innerHTML = "";
+            for (let i = 0; i < questionsDatabase.length; i++) {
+                const btn = document.createElement("button");
+                btn.id = `nav-btn-${i}`;
+                btn.className = "py-2.5 rounded-xl text-xs font-black transition-all bg-slate-900 border border-slate-800 text-slate-400 hover:border-slate-600 hover:text-white";
+                btn.innerText = i + 1;
+                btn.onclick = () => loadQuestion(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        // Load Question Data into UI
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const q = questionsDatabase[index];
+
+            // Update Header Display
+            document.getElementById("question-category").innerText = q.category;
+            document.getElementById("question-number-display").innerText = `SOAL ${index + 1} DARI 40`;
+            document.getElementById("question-text").innerText = q.question;
+
+            // Render Options
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            const abc = ["A", "B", "C", "D", "E"];
+            q.options.forEach((opt, idx) => {
+                const button = document.createElement("button");
+                button.id = `option-btn-${idx}`;
+                button.onclick = () => selectOption(idx);
+                button.className = "w-full p-4 rounded-2xl border transition-all duration-150 flex items-start text-left text-xs sm:text-sm font-semibold ";
+
+                // Class styles based on state
+                let stateClass = "bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800/80 hover:border-slate-700";
+                
+                if (userAnswers[index] !== null) {
+                    if (studyMode === "latihan") {
+                        // In Practice Mode: Immediate corrective feedback
+                        if (idx === q.correctIndex) {
+                            stateClass = "bg-emerald-950/40 border-emerald-500 text-emerald-400 shadow-lg shadow-emerald-950/20";
+                        } else if (idx === userAnswers[index]) {
+                            stateClass = "bg-rose-950/40 border-rose-500 text-rose-400 shadow-lg shadow-rose-950/20";
+                        } else {
+                            stateClass = "bg-slate-950/40 border-slate-900 text-slate-500 cursor-not-allowed";
+                        }
+                    } else {
+                        // In Exam Mode: Just show chosen option
+                        if (idx === userAnswers[index]) {
+                            stateClass = "bg-blue-950/50 border-blue-500 text-blue-300 shadow-lg shadow-blue-950/20";
+                        } else {
+                            stateClass = "bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800/80 hover:border-slate-700";
+                        }
+                    }
+                }
+
+                button.className += stateClass;
+                button.innerHTML = `
+                    <span class="bg-slate-800 border border-slate-700 text-slate-400 font-bold rounded-lg px-2 py-0.5 mr-3 text-xs block">${abc[idx]}</span>
+                    <span class="flex-grow leading-relaxed">${opt}</span>
+                `;
+                optionsContainer.appendChild(button);
+            });
+
+            // Handle Feynman Coach Explanation visibility
+            const expBox = document.getElementById("explanation-box");
+            if (studyMode === "latihan" && userAnswers[index] !== null) {
+                expBox.classList.remove("hidden");
+                document.getElementById("explanation-text").innerText = q.feynman;
+            } else {
+                expBox.classList.add("hidden");
+            }
+
+            // Handle doubt button visual state
+            const doubtBtn = document.getElementById("btn-mark-doubt");
+            if (doubtStatus[index]) {
+                doubtBtn.className = "bg-amber-950/50 hover:bg-amber-950 border border-amber-500 text-amber-500 px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5";
+            } else {
+                doubtBtn.className = "bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5";
+            }
+
+            // Active grid button state updates
+            updateNavGridColors();
+        }
+
+        // Action when an option is selected
+        function selectOption(idx) {
+            // Prevent changing answer if already chosen in Latihan mode
+            if (studyMode === "latihan" && userAnswers[currentQuestionIndex] !== null) return;
+
+            userAnswers[currentQuestionIndex] = idx;
+            loadQuestion(currentQuestionIndex);
+            updateStats();
+        }
+
+        // Toggle question marked as doubt (ragu-ragu)
+        function toggleDoubt() {
+            doubtStatus[currentQuestionIndex] = !doubtStatus[currentQuestionIndex];
+            loadQuestion(currentQuestionIndex);
+            updateStats();
+        }
+
+        // Navigate between questions (+1 next, -1 prev)
+        function navigateQuestion(direction) {
+            let nextIndex = currentQuestionIndex + direction;
+            if (nextIndex >= 0 && nextIndex < questionsDatabase.length) {
+                loadQuestion(nextIndex);
+            }
+        }
+
+        // Mode Switching System
+        function switchMode(mode) {
+            studyMode = mode;
+            const lbl = document.getElementById("current-mode-label");
+            const btnLatihan = document.getElementById("btn-mode-latihan");
+            const btnUjian = document.getElementById("btn-mode-ujian");
+            const submitBtn = document.getElementById("btn-submit-exam");
+
+            if (mode === "latihan") {
+                lbl.innerText = "Mode Latihan";
+                btnLatihan.className = "flex-1 py-3 text-center rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg";
+                btnUjian.className = "flex-1 py-3 text-center rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all duration-200 hover:bg-slate-900";
+                submitBtn.classList.add("hidden");
+            } else {
+                lbl.innerText = "Mode Ujian";
+                btnUjian.className = "flex-1 py-3 text-center rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg";
+                btnLatihan.className = "flex-1 py-3 text-center rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all duration-200 hover:bg-slate-900";
+                submitBtn.classList.remove("hidden");
+            }
+
+            // Reset view state
+            loadQuestion(currentQuestionIndex);
+        }
+
+        // Update stats dashboard cards
+        function updateStats() {
+            let answeredCount = 0;
+            let correctCount = 0;
+            let doubtCount = 0;
+
+            userAnswers.forEach((ans, idx) => {
+                if (ans !== null) answeredCount++;
+                if (ans === questionsDatabase[idx].correctIndex) correctCount++;
+            });
+
+            doubtStatus.forEach(status => { if (status) doubtCount++; });
+
+            // Set counters
+            document.getElementById("answered-counter").innerText = `${answeredCount} / 40 Soal`;
+            document.getElementById("marked-counter").innerText = doubtCount;
+
+            // Accuracy (Only tracks answered questions in Practice mode)
+            if (answeredCount > 0) {
+                let acc = Math.round((correctCount / answeredCount) * 100);
+                document.getElementById("accuracy-counter").innerText = `${acc}%`;
+            } else {
+                document.getElementById("accuracy-counter").innerText = `-%`;
+            }
+
+            // Set progress bar fill width
+            let fillPct = (answeredCount / questionsDatabase.length) * 100;
+            document.getElementById("progress-bar-fill").style.width = `${fillPct}%`;
+        }
+
+        // Update the colors of the grid navigation buttons
+        function updateNavGridColors() {
+            for (let i = 0; i < questionsDatabase.length; i++) {
+                const btn = document.getElementById(`nav-btn-${i}`);
+                if (!btn) continue;
+
+                // Basic baseline
+                btn.className = "py-2.5 rounded-xl text-xs font-black transition-all border text-center ";
+
+                if (i === currentQuestionIndex) {
+                    btn.className += "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/30 ring-2 ring-blue-300 ring-offset-2 ring-offset-slate-900";
+                } else if (doubtStatus[i]) {
+                    btn.className += "bg-amber-500/10 border-amber-500 text-amber-500";
+                } else if (userAnswers[i] !== null) {
+                    btn.className += "bg-emerald-950/40 border-emerald-600/70 text-emerald-400";
+                } else {
+                    btn.className += "bg-slate-950 border-slate-800/80 text-slate-500 hover:border-slate-700 hover:text-slate-300";
+                }
+            }
+        }
+
+        // Pomodoro Timer Widget Logic
+        function togglePomodoro() {
+            const btn = document.querySelector("#pomodoro-widget button");
+            const display = document.getElementById("pomo-display");
+
+            if (isPomoRunning) {
+                // Pause Timer
+                clearInterval(pomodoroTimer);
+                isPomoRunning = false;
+                btn.innerText = "Start";
+                btn.className = "bg-rose-600 hover:bg-rose-700 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md transition-all";
+            } else {
+                // Start Timer
+                isPomoRunning = true;
+                btn.innerText = "Pause";
+                btn.className = "bg-amber-600 hover:bg-amber-700 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-md transition-all";
+                
+                pomodoroTimer = setInterval(() => {
+                    pTimerSeconds--;
+                    let mins = Math.floor(pTimerSeconds / 60);
+                    let secs = pTimerSeconds % 60;
+                    display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                    if (pTimerSeconds <= 0) {
+                        clearInterval(pomodoroTimer);
+                        isPomoRunning = false;
+                        display.innerText = "Rest! (5m)";
+                        pTimerSeconds = 5 * 60; // Set up a short rest interval automatically
+                        btn.innerText = "Break";
+                    }
+                }, 1000);
+            }
+        }
+
+        // Show Pomodoro widget immediately on loading
+        document.getElementById("pomodoro-widget").classList.remove("hidden");
+
+        // Submit/Finish Exam Mode Analysis
+        function finishExam() {
+            // Count missing questions
+            let missing = 0;
+            userAnswers.forEach(ans => { if (ans === null) missing++; });
+
+            if (missing > 0) {
+                const proceed = confirm(`Peringatan: Masih ada ${missing} soal yang belum Anda jawab. Apakah Anda tetap ingin mengumpulkan hasil ujian?`);
+                if (!proceed) return;
+            }
+
+            // Calculation and diagnostics
+            let score = 0;
+            let correctCount = 0;
+
+            // Element based tracking variables
+            let catStats = {
+                "Pancasila": { correct: 0, total: 5 },
+                "UUD NRI 1945": { correct: 0, total: 5 },
+                "Bhinneka Tunggal Ika": { correct: 0, total: 20 },
+                "NKRI": { correct: 0, total: 10 }
+            };
+
+            userAnswers.forEach((ans, idx) => {
+                const q = questionsDatabase[idx];
+                const key = q.category.replace("Elemen 1: ", "").replace("Elemen 2: ", "").replace("Elemen 3: ", "").replace("Elemen 4: ", "");
+                
+                if (ans === q.correctIndex) {
+                    correctCount++;
+                    if (catStats[key]) catStats[key].correct++;
+                }
+            });
+
+            // Standardize score to 100 base
+            score = Math.round((correctCount / questionsDatabase.length) * 100);
+
+            // Set final grade badge
+            let badgeText = "Warga Negara Teladan";
+            let badgeClass = "text-emerald-400 bg-emerald-950/50 border border-emerald-800/60";
+            if (score >= 90) {
+                badgeText = "Garda Konstitusi Paripurna";
+                badgeClass = "text-indigo-400 bg-indigo-950/50 border border-indigo-800/60";
+            } else if (score >= 75) {
+                badgeText = "Duta Bhinneka Unggul";
+                badgeClass = "text-blue-400 bg-blue-950/50 border border-blue-800/60";
+            } else if (score >= 50) {
+                badgeText = "Pilar Pancasila Pemula";
+                badgeClass = "text-amber-400 bg-amber-950/50 border border-amber-800/60";
+            } else {
+                badgeText = "Perlu Belajar Lebih Giat";
+                badgeClass = "text-rose-400 bg-rose-950/50 border border-rose-800/60";
+            }
+
+            // Injected values to DOM
+            document.getElementById("modal-score").innerText = `${score} / 100`;
+            const badgeElem = document.getElementById("modal-badge");
+            badgeElem.innerText = badgeText;
+            badgeElem.className = `text-sm font-black px-3 py-1.5 rounded-xl ${badgeClass}`;
+
+            // Generate Element Breakdown Progress Bars
+            const breakdownContainer = document.getElementById("element-breakdown-container");
+            breakdownContainer.innerHTML = "";
+
+            Object.keys(catStats).forEach(key => {
+                const elem = catStats[key];
+                const pct = Math.round((elem.correct / elem.total) * 100);
+                
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "space-y-1.5";
+                itemDiv.innerHTML = `
+                    <div class="flex justify-between text-xs font-bold text-slate-400">
+                        <span>Elemen ${key}</span>
+                        <span>${elem.correct} / ${elem.total} Benar (${pct}%)</span>
+                    </div>
+                    <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-500" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                breakdownContainer.appendChild(itemDiv);
+            });
+
+            // Show Modal Popup Box
+            document.getElementById("result-modal").classList.remove("hidden");
+        }
+
+        // Close Diagnostic Modal Window
+        function closeModal() {
+            document.getElementById("result-modal").classList.add("hidden");
+        }
+
+        // Restart Exam State fully
+        function restartExam() {
+            userAnswers = new Array(questionsDatabase.length).fill(null);
+            doubtStatus = new Array(questionsDatabase.length).fill(false);
+            closeModal();
+            updateStats();
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
